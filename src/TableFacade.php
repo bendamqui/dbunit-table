@@ -18,6 +18,11 @@ class TableFacade
     private $table;
 
     /**
+     * @var string
+     */
+    private $primary_key = 'id';
+
+    /**
      * BaseFixtureAdaptor constructor.
      *
      * @param ITable $table
@@ -25,6 +30,11 @@ class TableFacade
     public function __construct(ITable $table)
     {
         $this->table = $table;
+    }
+
+    public function setPrimaryKey($primary_key)
+    {
+        $this->primary_key = $primary_key;
     }
 
     /**
@@ -84,6 +94,17 @@ class TableFacade
     {
         $payload = $this->getRaw($row);
         return $this->process($payload, $override);
+    }
+
+    /**
+     * @param $id
+     * @param $override
+     * @return array
+     */
+    public function getByPrimaryKey($id, $override = [])
+    {
+        $payload = $this->getWhere([$this->primary_key => $id]);
+        return $this->process($payload[0], $override);
     }
 
     /**
