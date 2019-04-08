@@ -9,6 +9,7 @@ before_script:
 
 script:
   - ls /home/travis/.config/composer
+  - which php-coveralls
   - mkdir -p build/logs
   - vendor/phpunit/phpunit/phpunit --coverage-clover build/logs/clover.xml
 
