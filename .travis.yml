@@ -9,6 +9,7 @@ before_script:
 script:
   - mkdir -p build/logs
   - vendor/phpunit/phpunit/phpunit --coverage-clover build/logs/clover.xml
+  - ls build/logs/
 
 after_script:
   - php vendor/bin/coveralls -v
