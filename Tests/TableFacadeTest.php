@@ -35,6 +35,7 @@ class TableFacadeTest extends TestCase
     {
         $data = file_get_contents(__DIR__.'/../Tests/fixture.json');
         $data = json_decode($data, true);
+
         return new ArrayDataSet($data);
     }
 
@@ -95,7 +96,7 @@ class TableFacadeTest extends TestCase
 
     /**
      * @param array $filters
-     * @param int $expected_row_count
+     * @param int   $expected_row_count
      * @dataProvider filterProvider
      */
     public function testGetWhere($filters, $expected_row_count)
@@ -108,7 +109,6 @@ class TableFacadeTest extends TestCase
                 $this->assertEquals($value, $row[$key]);
             }
         }
-
     }
 
     public function testDotSetter()
@@ -132,7 +132,7 @@ class TableFacadeTest extends TestCase
 
     /**
      * - Filters
-     * - Expected row count
+     * - Expected row count.
      *
      * @return array
      */

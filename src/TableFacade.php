@@ -60,7 +60,7 @@ class TableFacade
         $output = [];
         $row_count = $this->getRowCount();
 
-        for ($i = 0; $i < $row_count; $i++) {
+        for ($i = 0; $i < $row_count; ++$i) {
             $output[] = $this->getRaw($i);
         }
 
@@ -71,42 +71,12 @@ class TableFacade
      * Get a row by its row number (skip post processing).
      *
      * @param int $row
+     *
      * @return array
      */
     public function getRaw($row = 0)
     {
         return $this->table->getRow($row);
-    }
-
-    /**
-     * @param array $payload
-     * @param array $override
-     *
-     * @return array
-     */
-    private function process($payload, $override)
-    {
-        $payload = $this->postProcess($payload);
-        $payload = $this->hide($payload);
-        foreach ($override as $key => $value) {
-            $payload = $this->dotSetter($payload, $key, $value);
-        }
-
-        return $payload;
-    }
-
-    /**
-     * @param array $rows
-     * @return array
-     */
-    private function hide($rows)
-    {
-        if (!empty($this->hidden)){
-            foreach ($this->hidden as $hidden) {
-                unset($rows[$hidden]);
-            }
-        }
-        return $rows;
     }
 
     /**
@@ -121,17 +91,20 @@ class TableFacade
     public function get($override = [], $row = 0)
     {
         $payload = $this->getRaw($row);
+
         return $this->process($payload, $override);
     }
 
     /**
      * @param $id
      * @param $override
+     *
      * @return array
      */
     public function getByPrimaryKey($id, $override = [])
     {
         $payload = $this->getWhere([$this->primary_key => $id]);
+
         return $this->process($payload[0], $override);
     }
 
@@ -157,32 +130,6 @@ class TableFacade
     public function getRowCount()
     {
         return $this->table->getRowCount();
-    }
-
-    /**
-     * @param array  $payload
-     * @param string $keys
-     * @param mixed  $value
-     *
-     * @return array
-     */
-    private function dotSetter($payload, $keys, $value)
-    {
-        $copy = &$payload;
-        $keys = explode('.', $keys);
-
-        foreach ($keys as $key) {
-            if (is_array($copy)) {
-                $copy = &$copy[$key] ?? null;
-            } else {
-                $copy = [];
-                $copy = &$copy[$key];
-            }
-        }
-
-        $copy = $value;
-
-        return $payload;
     }
 
     /**
@@ -217,10 +164,70 @@ class TableFacade
      * send first_name and last_name separately.
      *
      * @param $payload
+     *
      * @return mixed
      */
     protected function postProcess($payload)
     {
+        return $payload;
+    }
+
+    /**
+     * @param array $payload
+     * @param array $override
+     *
+     * @return array
+     */
+    private function process($payload, $override)
+    {
+        $payload = $this->postProcess($payload);
+        $payload = $this->hide($payload);
+        foreach ($override as $key => $value) {
+            $payload = $this->dotSetter($payload, $key, $value);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @param array $rows
+     *
+     * @return array
+     */
+    private function hide($rows)
+    {
+        if (!empty($this->hidden)) {
+            foreach ($this->hidden as $hidden) {
+                unset($rows[$hidden]);
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @param array  $payload
+     * @param string $keys
+     * @param mixed  $value
+     *
+     * @return array
+     */
+    private function dotSetter($payload, $keys, $value)
+    {
+        $copy = &$payload;
+        $keys = explode('.', $keys);
+
+        foreach ($keys as $key) {
+            if (is_array($copy)) {
+                $copy = &$copy[$key] ?? null;
+            } else {
+                $copy = [];
+                $copy = &$copy[$key];
+            }
+        }
+
+        $copy = $value;
+
         return $payload;
     }
 }

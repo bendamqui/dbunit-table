@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+echo "php-cs-fixer pre commit hook start..." . PHP_EOL;
+
+exec("git diff --cached --name-only --diff-filter=ACM -- '*.php'", $files);
+
+foreach ($files as $file) {
+    if (is_file($file)) {
+        exec(sprintf('vendor/bin/php-cs-fixer fix %s --diff --rules=@Symfony,ordered_class_elements', $file), $output, $code);
+        if ($code != 0) {
+            exit($code);
+        }
+    }
+}
+
+exec('git add .',$output, $code);
+
+if ($code != 0) {
+    exit($code);
+}
+
+
+exit(0);
