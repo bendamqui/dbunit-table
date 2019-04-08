@@ -125,8 +125,6 @@ class TableFacade
         foreach ($keys as $key) {
             if (is_array($copy)) {
                 $copy = &$copy[$key] ?? null;
-            } elseif (is_object($copy)) {
-                $copy = &$copy->$key ?? null;
             } else {
                 $copy = [];
                 $copy = &$copy[$key];
