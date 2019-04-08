@@ -1,12 +1,15 @@
 {
     "name": "bendamqui/dbunit-table",
+    "description": "Facade to fetch dbunit fixtures without querying the database.",
     "authors": [
         {
             "name": "Benoit Michaud",
             "email": "bendamqui@icloud.com"
         }
     ],
+    "license": "MIT",
     "require": {
+        "php": "^7.2",
         "phpunit/dbunit": "^4.0",
         "php-coveralls/php-coveralls": "^2.1"
     },
