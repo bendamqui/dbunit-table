@@ -8,6 +8,7 @@ before_script:
   - composer global require php-coveralls/php-coveralls
 
 script:
+  - PWD
   - mkdir -p build/logs
   - vendor/phpunit/phpunit/phpunit --coverage-clover build/logs/clover.xml
 
