@@ -8,10 +8,8 @@ before_script:
   - composer global require php-coveralls/php-coveralls
 
 script:
-  - ls /home/travis/.config/composer
-  - which php-coveralls
   - mkdir -p build/logs
   - vendor/phpunit/phpunit/phpunit --coverage-clover build/logs/clover.xml
 
 after_success:
-  - travis_retry php /.composer/vendor/bin/php-coveralls
+  - travis_retry php php-coveralls
