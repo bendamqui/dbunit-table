@@ -1,0 +1,21 @@
+{
+    "name": "bendamqui/dbunit-table",
+    "authors": [
+        {
+            "name": "Benoit Michaud",
+            "email": "bendamqui@icloud.com"
+        }
+    ],
+    "require": {
+        "phpunit/dbunit": "^4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bendamqui\\DbUnit\\": "src"
+        }
+
+    }
+}
