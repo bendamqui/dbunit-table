@@ -57,22 +57,6 @@ class TableFacade
     }
 
     /**
-     * @param array $payload
-     * @param array $override
-     *
-     * @return array
-     */
-    private function process($payload, $override)
-    {
-        $payload = $this->postProcess($payload);
-        foreach ($override as $key => $value) {
-            $payload = $this->dotSetter($payload, $key, $value);
-        }
-
-        return $payload;
-    }
-
-    /**
      * Takes a raw fixture from the table and override the properties
      * passed in $override.
      *
@@ -113,34 +97,6 @@ class TableFacade
     }
 
     /**
-     * @param array  $payload
-     * @param string $keys
-     * @param mixed  $value
-     *
-     * @return array
-     */
-    private function dotSetter($payload, $keys, $value)
-    {
-        $copy = &$payload;
-        $keys = explode('.', $keys);
-
-        foreach ($keys as $key) {
-            if (is_array($copy)) {
-                $copy = &$copy[$key] ?? null;
-            } elseif (is_object($copy)) {
-                $copy = &$copy->$key ?? null;
-            } else {
-                $copy = [];
-                $copy = &$copy[$key];
-            }
-        }
-
-        $copy = $value;
-
-        return $payload;
-    }
-
-    /**
      * Get many rows using filters in the form of key value. Perform AND only.
      *
      * @param array $filters
@@ -177,6 +133,50 @@ class TableFacade
      */
     protected function postProcess($payload)
     {
+        return $payload;
+    }
+
+    /**
+     * @param array $payload
+     * @param array $override
+     *
+     * @return array
+     */
+    private function process($payload, $override)
+    {
+        $payload = $this->postProcess($payload);
+        foreach ($override as $key => $value) {
+            $payload = $this->dotSetter($payload, $key, $value);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @param array  $payload
+     * @param string $keys
+     * @param mixed  $value
+     *
+     * @return array
+     */
+    private function dotSetter($payload, $keys, $value)
+    {
+        $copy = &$payload;
+        $keys = explode('.', $keys);
+
+        foreach ($keys as $key) {
+            if (is_array($copy)) {
+                $copy = &$copy[$key] ?? null;
+            } elseif (is_object($copy)) {
+                $copy = &$copy->$key ?? null;
+            } else {
+                $copy = [];
+                $copy = &$copy[$key];
+            }
+        }
+
+        $copy = $value;
+
         return $payload;
     }
 }
