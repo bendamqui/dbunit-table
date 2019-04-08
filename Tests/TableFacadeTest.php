@@ -8,13 +8,15 @@ class TableFacadeTest extends TestCase
 {
     const ROW_COUNT = 5;
 
+    const PRIMARY_KEY = 'user_id';
+
     /**
      * @var TableFacade
      */
     private $table;
 
     /**
-     * Use a random number for the row to fetch when fetching one row or
+     * Use a random number for the row to fetch for test where fetching one row or
      * another is irrelevant.
      *
      * @var int
@@ -25,6 +27,7 @@ class TableFacadeTest extends TestCase
     {
         parent::setUp();
         $this->table = new TableFacade($this->getDataSet()->getTable('users'));
+        $this->table->setPrimaryKey(self::PRIMARY_KEY);
         $this->row_number = rand(0, self::ROW_COUNT - 1);
     }
 
@@ -45,13 +48,13 @@ class TableFacadeTest extends TestCase
     public function testGetRaw()
     {
         $result = $this->table->getRaw();
-        $this->assertEquals(1, $result['id']);
+        $this->assertEquals(1, $result[self::PRIMARY_KEY]);
     }
 
     public function testGetRawByRow()
     {
         $result = $this->table->getRaw($this->row_number);
-        $this->assertEquals($this->row_number + 1, $result['id']);
+        $this->assertEquals($this->row_number + 1, $result[self::PRIMARY_KEY]);
     }
 
     public function testGetRowCount()
@@ -69,19 +72,26 @@ class TableFacadeTest extends TestCase
     public function testGetFirst()
     {
         $result = $this->table->get();
-        $this->assertEquals(1, $result['id']);
+        $this->assertEquals(1, $result[self::PRIMARY_KEY]);
     }
 
     public function testGetByRow()
     {
         $result = $this->table->get([], $this->row_number);
-        $this->assertEquals($this->row_number + 1, $result['id']);
+        $this->assertEquals($this->row_number + 1, $result[self::PRIMARY_KEY]);
     }
 
     public function testGetOverride()
     {
         $result = $this->table->get(['first_name' => 'Bob'], $this->row_number);
         $this->assertEquals('Bob', $result['first_name']);
+    }
+
+    public function testHide()
+    {
+        $this->table->setHidden(['first_name']);
+        $result = $this->table->get();
+        $this->assertTrue(!isset($result['first_name']));
     }
 
     /**
@@ -107,6 +117,19 @@ class TableFacadeTest extends TestCase
         $this->assertEquals(1, $result['a']['b']);
     }
 
+    public function testGetByPrimaryKey()
+    {
+        $result = $this->table->getByPrimaryKey(4);
+        $this->assertEquals('Kianna', $result['first_name']);
+    }
+
+    public function testGetByPrimaryKeyWithOverride()
+    {
+        $result = $this->table->getByPrimaryKey(4, ['last_name' => 'Michaud', 'a.b' => 1]);
+        $this->assertEquals('Michaud', $result['last_name']);
+        $this->assertEquals(1, $result['a']['b']);
+    }
+
     /**
      * - Filters
      * - Expected row count.
@@ -116,8 +139,8 @@ class TableFacadeTest extends TestCase
     public function filterProvider()
     {
         return [
-            [['id' => 1], 1],
-            [['id' => 2, 'created_at' => '2019-04-06 03:56:44'], 1],
+            [[self::PRIMARY_KEY => 1], 1],
+            [[self::PRIMARY_KEY => 2, 'created_at' => '2019-04-06 03:56:44'], 1],
             [['created_at' => '2019-04-06 03:56:44'], 5],
             [['first_name' => 'Bob'], 0],
             [['first_name' => 'Bob', 'created_at' => '2019-04-06 03:56:44'], 0],

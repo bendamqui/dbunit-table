@@ -18,6 +18,16 @@ class TableFacade
     private $table;
 
     /**
+     * @var string
+     */
+    private $primary_key = 'id';
+
+    /**
+     * @var array
+     */
+    private $hidden;
+
+    /**
      * BaseFixtureAdaptor constructor.
      *
      * @param ITable $table
@@ -25,6 +35,19 @@ class TableFacade
     public function __construct(ITable $table)
     {
         $this->table = $table;
+    }
+
+    /**
+     * @param string $primary_key
+     */
+    public function setPrimaryKey($primary_key)
+    {
+        $this->primary_key = $primary_key;
+    }
+
+    public function setHidden($hidden)
+    {
+        $this->hidden = $hidden;
     }
 
     /**
@@ -70,6 +93,19 @@ class TableFacade
         $payload = $this->getRaw($row);
 
         return $this->process($payload, $override);
+    }
+
+    /**
+     * @param $id
+     * @param $override
+     *
+     * @return array
+     */
+    public function getByPrimaryKey($id, $override = [])
+    {
+        $payload = $this->getWhere([$this->primary_key => $id]);
+
+        return $this->process($payload[0], $override);
     }
 
     /**
@@ -145,11 +181,28 @@ class TableFacade
     private function process($payload, $override)
     {
         $payload = $this->postProcess($payload);
+        $payload = $this->hide($payload);
         foreach ($override as $key => $value) {
             $payload = $this->dotSetter($payload, $key, $value);
         }
 
         return $payload;
+    }
+
+    /**
+     * @param array $rows
+     *
+     * @return array
+     */
+    private function hide($rows)
+    {
+        if (!empty($this->hidden)) {
+            foreach ($this->hidden as $hidden) {
+                unset($rows[$hidden]);
+            }
+        }
+
+        return $rows;
     }
 
     /**
@@ -167,8 +220,6 @@ class TableFacade
         foreach ($keys as $key) {
             if (is_array($copy)) {
                 $copy = &$copy[$key] ?? null;
-            } elseif (is_object($copy)) {
-                $copy = &$copy->$key ?? null;
             } else {
                 $copy = [];
                 $copy = &$copy[$key];
