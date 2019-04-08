@@ -26,13 +26,13 @@ class TableFacadeTest extends TestCase
         parent::setUp();
         $this->table = new TableFacade($this->getDataSet()->getTable('users'));
         $this->row_number = rand(0, self::ROW_COUNT - 1);
-
     }
 
     public function getDataSet()
     {
         $data = file_get_contents(__DIR__.'/../Tests/fixture.json');
         $data = json_decode($data, true);
+
         return new ArrayDataSet($data);
     }
 
@@ -86,7 +86,7 @@ class TableFacadeTest extends TestCase
 
     /**
      * @param array $filters
-     * @param int $expected_row_count
+     * @param int   $expected_row_count
      * @dataProvider filterProvider
      */
     public function testGetWhere($filters, $expected_row_count)
@@ -99,7 +99,6 @@ class TableFacadeTest extends TestCase
                 $this->assertEquals($value, $row[$key]);
             }
         }
-
     }
 
     public function testDotSetter()
@@ -110,7 +109,7 @@ class TableFacadeTest extends TestCase
 
     /**
      * - Filters
-     * - Expected row count
+     * - Expected row count.
      *
      * @return array
      */

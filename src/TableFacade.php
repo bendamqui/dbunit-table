@@ -37,7 +37,7 @@ class TableFacade
         $output = [];
         $row_count = $this->getRowCount();
 
-        for ($i = 0; $i < $row_count; $i++) {
+        for ($i = 0; $i < $row_count; ++$i) {
             $output[] = $this->getRaw($i);
         }
 
@@ -48,6 +48,7 @@ class TableFacade
      * Get a row by its row number (skip post processing).
      *
      * @param int $row
+     *
      * @return array
      */
     public function getRaw($row = 0)
@@ -83,6 +84,7 @@ class TableFacade
     public function get($override = [], $row = 0)
     {
         $payload = $this->getRaw($row);
+
         return $this->process($payload, $override);
     }
 
@@ -170,6 +172,7 @@ class TableFacade
      * send first_name and last_name separately.
      *
      * @param $payload
+     *
      * @return mixed
      */
     protected function postProcess($payload)
