@@ -86,6 +86,13 @@ class TableFacadeTest extends TestCase
         $this->assertEquals('Bob', $result['first_name']);
     }
 
+    public function testHide()
+    {
+        $this->table->setHidden(['first_name']);
+        $result = $this->table->get();
+        $this->assertTrue(!isset($result['first_name']));
+    }
+
     /**
      * @param array $filters
      * @param int $expected_row_count

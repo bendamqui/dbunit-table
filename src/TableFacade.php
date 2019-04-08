@@ -23,6 +23,11 @@ class TableFacade
     private $primary_key = 'id';
 
     /**
+     * @var array
+     */
+    private $hidden;
+
+    /**
      * BaseFixtureAdaptor constructor.
      *
      * @param ITable $table
@@ -32,9 +37,17 @@ class TableFacade
         $this->table = $table;
     }
 
+    /**
+     * @param string $primary_key
+     */
     public function setPrimaryKey($primary_key)
     {
         $this->primary_key = $primary_key;
+    }
+
+    public function setHidden($hidden)
+    {
+        $this->hidden = $hidden;
     }
 
     /**
@@ -74,11 +87,26 @@ class TableFacade
     private function process($payload, $override)
     {
         $payload = $this->postProcess($payload);
+        $payload = $this->hide($payload);
         foreach ($override as $key => $value) {
             $payload = $this->dotSetter($payload, $key, $value);
         }
 
         return $payload;
+    }
+
+    /**
+     * @param array $rows
+     * @return array
+     */
+    private function hide($rows)
+    {
+        if (!empty($this->hidden)){
+            foreach ($this->hidden as $hidden) {
+                unset($rows[$hidden]);
+            }
+        }
+        return $rows;
     }
 
     /**
