@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "user_id": 1,
       "first_name": "Ethel",
       "last_name": "1Kassulke",
       "email": "colin.windler@gmail.com",
@@ -14,7 +14,7 @@
       }
     },
     {
-      "id": 2,
+      "user_id": 2,
       "first_name": "Baron",
       "last_name": "Abbott",
       "email": "darryl.considine@hermiston.com",
@@ -27,7 +27,7 @@
       }
     },
     {
-      "id": 3,
+      "user_id": 3,
       "first_name": "Dessie",
       "last_name": "Schinner",
       "email": "marilie.johnson@satterfield.com",
@@ -40,7 +40,7 @@
       }
     },
     {
-      "id": 4,
+      "user_id": 4,
       "first_name": "Kianna",
       "last_name": "Pfeffer",
       "email": "rutherford.reva@hoppe.net",
@@ -53,7 +53,7 @@
       }
     },
     {
-      "id": 5,
+      "user_id": 5,
       "first_name": "Mariela",
       "last_name": "Koepp",
       "email": "white.evelyn@yahoo.com",
