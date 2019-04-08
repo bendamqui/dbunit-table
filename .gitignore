@@ -2,3 +2,4 @@
 /.idea
 /report
 /vendor
+.php_cs.cache
