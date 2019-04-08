@@ -5,10 +5,11 @@ php:
 
 before_script:
   - composer install
+  - composer global require php-coveralls/php-coveralls
 
 script:
   - mkdir -p build/logs
   - vendor/phpunit/phpunit/phpunit --coverage-clover build/logs/clover.xml
 
 after_success:
-  - travis_retry php vendor/bin/php-coveralls
+  - travis_retry php ~/.composer/vendor/bin/php-coveralls
