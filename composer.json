@@ -22,5 +22,10 @@
             "Bendamqui\\DbUnit\\": "src"
         }
 
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "bash setup.sh"
+        ]
     }
 }
