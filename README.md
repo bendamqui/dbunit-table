@@ -97,7 +97,7 @@ public function testCannotUpdateUserWithAnInvalidEmail()
 	// Get a valid payload to update a user and override the email field. 
 	$payload = $this->users_table->get(['email' => 'invalid_email']);
 	$response = $this->app->put('user', $payload);
-	$this->assertEquals(400, $response->getCode(), 'User update with invalid email should receive a bad reques response');
+	$this->assertEquals(400, $response->getCode(), 'User update with invalid email should receive a bad request response');
 }	
 ```
 
