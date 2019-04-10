@@ -71,34 +71,34 @@ Below are a few basic examples of how to take advantage of the facade to write t
 your code clean and avoiding unnecessary call to the database.
 
 ```php		
-	public function testGetAllUsers()
-	{
-		$expected = $this->users_table->getRowCount();
-		$response = $this->app->get('users');
-		$this->assertCount($expected, $response);
-	}
+public function testGetAllUsers()
+{
+	$expected = $this->users_table->getRowCount();
+	$response = $this->app->get('users');
+	$this->assertCount($expected, $response);
+}
 ```
 
 ```php	
-	public function testPendingUserCannotLogIn()
-	{
-		$pending_users = $this->users_table->getWhere(['status' => 'pending']);
-		foreach ($pending_users as $user) {
-			$response = $this->app->post('login', ['email' => $user['email'], 'pass' => $user['pass']]);
-			$this->assertEquals(401, $response->getCode(), 'Pending user should not be able to log in.');
-		}
-		$this->assertGreaterThan(0, count($pending_users));
+public function testPendingUserCannotLogIn()
+{
+	$pending_users = $this->users_table->getWhere(['status' => 'pending']);
+	foreach ($pending_users as $user) {
+		$response = $this->app->post('login', ['email' => $user['email'], 'pass' => $user['pass']]);
+		$this->assertEquals(401, $response->getCode(), 'Pending user should not be able to log in.');
 	}
+	$this->assertGreaterThan(0, count($pending_users));
+}
 ``` 
 
 ```php
-	public function testCannotUpdateUserWithAnInvalidEmail()
-	{
-		// Get a valid payload to update a user and override the email field. 
-		$payload = $this->users_table->get(['email' => 'invalid_email']);
-		$response = $this->app->put('user', $payload);
-		$this->assertEquals(400, $response->getCode(), 'User update with invalid email should receive a bad reques response');
-	}	
+public function testCannotUpdateUserWithAnInvalidEmail()
+{
+	// Get a valid payload to update a user and override the email field. 
+	$payload = $this->users_table->get(['email' => 'invalid_email']);
+	$response = $this->app->put('user', $payload);
+	$this->assertEquals(400, $response->getCode(), 'User update with invalid email should receive a bad reques response');
+}	
 ```
 
 ## API
