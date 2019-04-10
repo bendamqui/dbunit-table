@@ -5,10 +5,7 @@ namespace Bendamqui\DbUnit;
 use PHPUnit\DbUnit\DataSet\ITable;
 
 /**
- * Use the PHPUnit\DbUnit\DataSet\ITable to get mock payload based on the data
- * fixture set in DbUnit without querying the database.
- *
- * Class BaseFixtureAdaptor
+ * Class TableFacade.
  */
 class TableFacade
 {
@@ -28,7 +25,7 @@ class TableFacade
     private $hidden;
 
     /**
-     * BaseFixtureAdaptor constructor.
+     * TableFacade constructor.
      *
      * @param ITable $table
      */
@@ -38,6 +35,8 @@ class TableFacade
     }
 
     /**
+     * Set the primary key of the table. Is set to 'id' by default.
+     *
      * @param string $primary_key
      */
     public function setPrimaryKey($primary_key)
@@ -45,6 +44,11 @@ class TableFacade
         $this->primary_key = $primary_key;
     }
 
+    /**
+     * Set a list of columns that should not be returned when fetching row(s).
+     *
+     * @param array $hidden
+     */
     public function setHidden($hidden)
     {
         $this->hidden = $hidden;
@@ -80,8 +84,7 @@ class TableFacade
     }
 
     /**
-     * Takes a raw fixture from the table and override the properties
-     * passed in $override.
+     * Get one row.
      *
      * @param array $override
      * @param int   $row
@@ -96,6 +99,8 @@ class TableFacade
     }
 
     /**
+     * Get one row by primary key.
+     *
      * @param $id
      * @param $override
      *
@@ -122,8 +127,7 @@ class TableFacade
     }
 
     /**
-     * Perform a count on the array that populated the DB in DbUnit set up
-     * so we don't need to query the DB to get an initial row count.
+     * Get the number of row in the table.
      *
      * @return int
      */
