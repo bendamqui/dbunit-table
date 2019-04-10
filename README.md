@@ -1,5 +1,9 @@
 [![Build Status](https://travis-ci.org/bendamqui/dbunit-table.svg?branch=master)](https://travis-ci.org/bendamqui/dbunit-table)
 [![Coverage Status](https://coveralls.io/repos/github/bendamqui/dbunit-table/badge.svg?branch=master)](https://coveralls.io/github/bendamqui/dbunit-table?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/bendamqui/dbunit-table/v/stable.png)](https://packagist.org/packages/bendamqui/dbunit-table)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 ## Description
  
 One of the challenge when using DbUnit is to write tests that will stay valid even when the data fixtures get
