@@ -103,26 +103,17 @@ public function testCannotUpdateUserWithAnInvalidEmail()
 
 ## API
 
-- [\Bendamqui\DbUnit\TableFacade](#class-bendamquidbunittablefacade)
-
-<hr /><a id="class-bendamquidbunittablefacade"></a>
-### Class: \Bendamqui\DbUnit\TableFacade
-
-> Class TableFacade
-
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>__construct(</strong><em>\PHPUnit\DbUnit\DataSet\ITable</em> <strong>$table</strong>)</strong> : <em>void</em><br /><em>TableFacade constructor.</em> |
-| public | <strong>get(</strong><em>array</em> <strong>$override=array()</strong>, <em>int</em> <strong>$row</strong>)</strong> : <em>array</em><br /><em>Get one row.</em> |
+| public | <strong>get(</strong><em>array</em> <strong>$override=array()</strong>, <em>int</em> <strong>$row=0</strong>)</strong> : <em>array</em><br /><em>Get one row.</em> |
 | public | <strong>getAllRaw()</strong> : <em>array</em><br /><em>Get all rows in raw format (skip post processing).</em> |
 | public | <strong>getByPrimaryKey(</strong><em>mixed</em> <strong>$id</strong>, <em>array/mixed</em> <strong>$override=array()</strong>)</strong> : <em>array</em><br /><em>Get one row by primary key</em> |
-| public | <strong>getRaw(</strong><em>int</em> <strong>$row</strong>)</strong> : <em>array</em><br /><em>Get a row by its row number (skip post processing).</em> |
+| public | <strong>getRaw(</strong><em>int</em> <strong>$row=0</strong>)</strong> : <em>array</em><br /><em>Get a row by its row number (skip post processing).</em> |
 | public | <strong>getRowCount()</strong> : <em>int</em><br /><em>Get the number of row in the table</em> |
-| public | <strong>getValue(</strong><em>mixed</em> <strong>$column</strong>, <em>int</em> <strong>$row</strong>)</strong> : <em>mixed</em><br /><em>Get the value of a given row/column in the Table.</em> |
+| public | <strong>getValue(</strong><em>mixed</em> <strong>$column</strong>, <em>int</em> <strong>$row=0</strong>)</strong> : <em>mixed</em><br /><em>Get the value of a given row/column in the Table.</em> |
 | public | <strong>getWhere(</strong><em>array</em> <strong>$filters=array()</strong>)</strong> : <em>array</em><br /><em>Get many rows using filters in the form of key value. Perform AND only.</em> |
 | public | <strong>setHidden(</strong><em>array</em> <strong>$hidden</strong>)</strong> : <em>void</em><br /><em>Set a list of columns that should not be returned when fetching row(s)</em> |
 | public | <strong>setPrimaryKey(</strong><em>string</em> <strong>$primary_key</strong>)</strong> : <em>void</em><br /><em>Set the primary key of the table. Is set to 'id' by default.</em> |
-| protected | <strong>postProcess(</strong><em>mixed</em> <strong>$payload</strong>)</strong> : <em>mixed</em><br /><em>Placeholder, can be override in order to process the raw data in the db to the actual format of the payload. e.g. The db store a name while the web form send first_name and last_name separately.</em> |
 
 
 
