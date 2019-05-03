@@ -121,7 +121,7 @@ class TableFacade
      */
     public function getByPrimaryKey($id, $override = [])
     {
-        $payload = $this->getWhere([$this->primary_key => $id]);
+        $payload = $this->applyFilters([$this->primary_key => $id]);
 
         return $this->process($payload[0], $override);
     }
@@ -150,13 +150,11 @@ class TableFacade
     }
 
     /**
-     * Get many rows using filters in the form of key value. Perform AND only.
-     *
      * @param array $filters
      *
      * @return array
      */
-    public function getWhere($filters = [])
+    public function applyFilters($filters)
     {
         $output = [];
         $fixtures = $this->getAllRaw();
@@ -173,6 +171,23 @@ class TableFacade
         }
 
         return $output;
+    }
+
+    /**
+     * Get many rows using filters in the form of key value. Perform AND only.
+     *
+     * @param array $filters
+     *
+     * @return array
+     */
+    public function getWhere($filters, $override = [])
+    {
+        $payload = $this->applyFilters($filters);
+        foreach ($payload as &$row) {
+            $row = $this->process($row, $override);
+        }
+
+        return $payload;
     }
 
     /**

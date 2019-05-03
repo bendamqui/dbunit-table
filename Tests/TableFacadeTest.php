@@ -111,6 +111,19 @@ class TableFacadeTest extends TestCase
         }
     }
 
+    public function testGetWhereWithDefaultOverride()
+    {
+        $this->table->setDefaultOverride(['password' => 12345]);
+        $result = $this->table->getWhere(['user_id' => 2])[0];
+        $this->assertEquals(12345, $result['password']);
+    }
+
+    public function testGetWhereWithOverride()
+    {
+        $result = $this->table->getWhere(['user_id' => 2], ['password' => 12345])[0];
+        $this->assertEquals(12345, $result['password']);
+    }
+
     public function testDotSetter()
     {
         $result = $this->table->get(['a.b' => 1]);
