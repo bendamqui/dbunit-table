@@ -22,7 +22,12 @@ class TableFacade
     /**
      * @var array
      */
-    private $hidden;
+    private $hidden = [];
+
+    /**
+     * @var array
+     */
+    private $default_override = [];
 
     /**
      * TableFacade constructor.
@@ -52,6 +57,14 @@ class TableFacade
     public function setHidden($hidden)
     {
         $this->hidden = $hidden;
+    }
+
+    /**
+     * @param array $default
+     */
+    public function setDefaultOverride($override)
+    {
+        $this->default_override = $override;
     }
 
     /**
@@ -184,9 +197,19 @@ class TableFacade
      */
     private function process($payload, $override)
     {
+        $payload = $this->applyDefaultOverride($payload);
         $payload = $this->postProcess($payload);
         $payload = $this->hide($payload);
         foreach ($override as $key => $value) {
+            $payload = $this->dotSetter($payload, $key, $value);
+        }
+
+        return $payload;
+    }
+
+    private function applyDefaultOverride($payload)
+    {
+        foreach ($this->default_override as $key => $value) {
             $payload = $this->dotSetter($payload, $key, $value);
         }
 
@@ -200,10 +223,8 @@ class TableFacade
      */
     private function hide($rows)
     {
-        if (!empty($this->hidden)) {
-            foreach ($this->hidden as $hidden) {
-                unset($rows[$hidden]);
-            }
+        foreach ($this->hidden as $hidden) {
+            unset($rows[$hidden]);
         }
 
         return $rows;
