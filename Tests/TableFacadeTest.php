@@ -130,6 +130,26 @@ class TableFacadeTest extends TestCase
         $this->assertEquals(1, $result['a']['b']);
     }
 
+    public function testDefaultOverride()
+    {
+        $this->table->setDefaultOverride([
+            'default_override' => 'default_override',
+            'email' => 'default_override',
+        ]);
+        $result = $this->table->get();
+        $this->assertEquals('default_override', $result['default_override']);
+    }
+
+    public function testDefaultOverridePriority()
+    {
+        $this->table->setDefaultOverride([
+            'default_override' => 'default_override',
+            'email' => 'default_override',
+        ]);
+        $result = $this->table->get(['email' => 'override_email']);
+        $this->assertEquals('override_email', $result['email']);
+    }
+
     /**
      * - Filters
      * - Expected row count.
