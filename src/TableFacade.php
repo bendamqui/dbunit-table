@@ -140,6 +140,26 @@ class TableFacade
     }
 
     /**
+     * Get all the values for given columns.
+     *
+     * @param array|string $columns
+     * @param array        $filters
+     *
+     * @return array
+     */
+    public function getValues($columns, $filters = [])
+    {
+        $output = [];
+        $columns = is_array($columns) ? $columns : [$columns];
+        $payload = $this->getWhere($filters);
+        foreach ($columns as $column) {
+            $output[$column] = array_column($payload, $column);
+        }
+
+        return $output;
+    }
+
+    /**
      * Get the number of row in the table.
      *
      * @return int
