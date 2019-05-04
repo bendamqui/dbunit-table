@@ -163,6 +163,19 @@ class TableFacadeTest extends TestCase
         $this->assertEquals('override_email', $result['email']);
     }
 
+    public function testGetValues()
+    {
+        $result = $this->table->getValues('user_id');
+        $this->assertEquals([1, 2, 3, 4, 5], $result['user_id']);
+    }
+
+    public function testGetValuesWithMultipleColumns()
+    {
+        $result = $this->table->getValues(['user_id', 'role'], ['role' => 'admin']);
+        $this->assertEquals([1, 2, 3], $result['user_id']);
+        $this->assertEquals(array_fill(0, 3, 'admin'), $result['role']);
+    }
+
     /**
      * - Filters
      * - Expected row count.
