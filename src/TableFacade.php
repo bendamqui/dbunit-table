@@ -68,6 +68,21 @@ class TableFacade
     }
 
     /**
+     * @param array $override
+     *
+     * @return array
+     */
+    public function getAll($override = [])
+    {
+        $rows = $this->getAllRaw();
+        foreach ($rows as &$row) {
+            $row = $this->process($row, $override);
+        }
+
+        return $rows;
+    }
+
+    /**
      * Get all rows in raw format (skip post processing).
      *
      * @return array
