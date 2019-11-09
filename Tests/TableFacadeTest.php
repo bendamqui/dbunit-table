@@ -23,7 +23,7 @@ class TableFacadeTest extends TestCase
      */
     private $row_number;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         $this->table = new TableFacade($this->getDataSet()->getTable('users'));
