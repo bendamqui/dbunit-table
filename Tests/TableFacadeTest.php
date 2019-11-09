@@ -114,14 +114,19 @@ class TableFacadeTest extends TestCase
     public function testGetWhereWithDefaultOverride()
     {
         $this->table->setDefaultOverride(['password' => 12345]);
-        $result = $this->table->getWhere(['user_id' => 2])[0];
-        $this->assertEquals(12345, $result['password']);
+        $results = $this->table->getWhere(['user_id' => 2]);
+        foreach ($results as $result) {
+            $this->assertEquals(12345, $result['password']);
+        }
+
     }
 
     public function testGetWhereWithOverride()
     {
-        $result = $this->table->getWhere(['user_id' => 2], ['password' => 12345])[0];
-        $this->assertEquals(12345, $result['password']);
+        $results = $this->table->getWhere(['user_id' => 2], ['password' => 12345]);
+        foreach ($results as $result) {
+            $this->assertEquals(12345, $result['password']);
+        }
     }
 
     public function testDotSetter()
@@ -174,6 +179,11 @@ class TableFacadeTest extends TestCase
         $result = $this->table->getValues(['user_id', 'role'], ['role' => 'admin']);
         $this->assertEquals([1, 2, 3], $result['user_id']);
         $this->assertEquals(array_fill(0, 3, 'admin'), $result['role']);
+    }
+
+    public function testSmartArray()
+    {
+        $this->assertTrue(true);
     }
 
     /**
