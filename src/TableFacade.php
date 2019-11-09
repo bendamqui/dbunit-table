@@ -89,6 +89,18 @@ class TableFacade
     }
 
     /**
+     * @param array $override
+     *
+     * @return array
+     */
+    public function getAll($override = [])
+    {
+        return $this->withDefaultTransformations($this->smart_array)
+            ->map($this->applyOverride($override))
+            ->get();
+    }
+
+    /**
      * Get all rows in raw format (skip post processing).
      *
      * @return array

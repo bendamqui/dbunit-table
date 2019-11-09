@@ -110,6 +110,7 @@ public function testCannotUpdateUserWithAnInvalidEmail()
 | Visibility | Function |
 |:-----------|:---------|
 | public | <strong>get(</strong><em>array</em> <strong>$override=array()</strong>, <em>int</em> <strong>$row=0</strong>)</strong> : <em>array</em><br /><em>Get one row.</em> |
+| public | <strong>getAll(</strong><em>array</em> <strong>$override=array()</strong>)</strong> : <em>array</em><br /><em>Get all rows.</em> |
 | public | <strong>getAllRaw()</strong> : <em>array</em><br /><em>Get all rows in raw format (skip post processing).</em> |
 | public | <strong>getByPrimaryKey(</strong><em>mixed</em> <strong>$id</strong>, <em>array/mixed</em> <strong>$override=array()</strong>)</strong> : <em>array</em><br /><em>Get one row by primary key</em> |
 | public | <strong>getRaw(</strong><em>int</em> <strong>$row=0</strong>)</strong> : <em>array</em><br /><em>Get a row by its row number (skip post processing).</em> |
