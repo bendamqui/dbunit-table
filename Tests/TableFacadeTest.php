@@ -176,6 +176,19 @@ class TableFacadeTest extends TestCase
         $this->assertEquals(array_fill(0, 3, 'admin'), $result['role']);
     }
 
+    public function testGetAll()
+    {
+        $result = $this->table->getAll();
+        $this->assertCount(self::ROW_COUNT, $result);
+    }
+
+    public function testGetAllWithOverride()
+    {
+        $result = $this->table->getAll(['email' => 'override_email']);
+        $this->assertCount(self::ROW_COUNT, $result);
+        $this->assertEquals(array_unique(array_column($result, 'email'))[0], 'override_email');
+    }
+
     /**
      * - Filters
      * - Expected row count.
