@@ -3,6 +3,7 @@
 namespace Bendamqui\DbUnit;
 
 use PHPUnit\DbUnit\DataSet\ITable;
+use Closure;
 
 /**
  * Class TableFacade.
@@ -13,6 +14,11 @@ class TableFacade
      * @var ITable
      */
     private $table;
+
+    /**
+     * @var SmartArray
+     */
+    private $smart_array;
 
     /**
      * @var string
@@ -37,6 +43,21 @@ class TableFacade
     public function __construct(ITable $table)
     {
         $this->table = $table;
+        $this->smart_array = new SmartArray($this->iTableToArray());
+
+    }
+
+    /**
+     * @return array
+     */
+    private function iTableToArray()
+    {
+        $output = [];
+        $row_count = $this->table->getRowCount();
+        for ($i = 0; $i < $row_count; ++$i) {
+            $output[] = $this->table->getRow($i);
+        }
+        return $output;
     }
 
     /**
@@ -60,7 +81,7 @@ class TableFacade
     }
 
     /**
-     * @param array $default
+     * @param array $override
      */
     public function setDefaultOverride($override)
     {
@@ -74,12 +95,9 @@ class TableFacade
      */
     public function getAll($override = [])
     {
-        $rows = $this->getAllRaw();
-        foreach ($rows as &$row) {
-            $row = $this->process($row, $override);
-        }
-
-        return $rows;
+        return $this->withDefaultTransformations($this->smart_array)
+            ->map($this->applyOverride($override))
+            ->get();
     }
 
     /**
@@ -89,60 +107,125 @@ class TableFacade
      */
     public function getAllRaw()
     {
-        $output = [];
-        $row_count = $this->getRowCount();
-
-        for ($i = 0; $i < $row_count; ++$i) {
-            $output[] = $this->getRaw($i);
-        }
-
-        return $output;
+        return $this->smart_array->get();
     }
 
     /**
-     * Get a row by its row number (skip post processing).
+     * Get a row by its index
      *
-     * @param int $row
-     *
-     * @return array
+     * @param int $search
+     * @return mixed
      */
-    public function getRaw($row = 0)
+    public function getRaw($search = 0)
     {
-        return $this->table->getRow($row);
+        return $this->smart_array
+            ->filter($this->filterByIndex($search))
+            ->first();
+    }
+
+    /**
+     * @param int $search
+     * @return Closure
+     */
+    private function filterByIndex($search)
+    {
+        return function ($row, $index) use ($search) {
+            return $index === $search;
+        };
+    }
+
+    /**
+     * @param array $override
+     * @return Closure
+     */
+    private function applyOverride($override = [])
+    {
+        return function ($row) use ($override) {
+            foreach ($override as $key => $value) {
+                $row = $this->dotSetter($row, $key, $value);
+            }
+            return $row;
+        };
+    }
+
+    /**
+     * @param array $hidden
+     * @return Closure
+     */
+    private function applyHidden($hidden)
+    {
+        return function ($row) use ($hidden) {
+            foreach ($hidden as $key) {
+                unset($row[$key]);
+            }
+            return $row;
+        };
+    }
+
+    /**
+     * @param array $filters
+     * @return Closure
+     */
+    private function applyFilters($filters)
+    {
+        return function ($row) use ($filters) {
+            foreach ($filters as $key => $value) {
+                //@todo dotGetter
+                if ($row[$key] !== $value) {
+                    return false;
+                }
+            }
+            return true;
+        };
+    }
+
+    /**
+     * @param SmartArray $smart_array
+     * @return SmartArray
+     */
+    private function withDefaultTransformations(SmartArray $smart_array)
+    {
+        return $smart_array
+            ->map($this->applyOverride($this->default_override))
+            ->map($this->applyPostProcess())
+            ->map($this->applyHidden($this->hidden));
     }
 
     /**
      * Get one row.
      *
      * @param array $override
-     * @param int   $row
+     * @param int $row
      *
-     * @return array
+     * @return mixed
      */
     public function get($override = [], $row = 0)
     {
-        $payload = $this->getRaw($row);
-
-        return $this->process($payload, $override);
+        return $this->withDefaultTransformations($this->smart_array->filter($this->filterByIndex($row)))
+            ->map($this->applyOverride($override))
+            ->first();
     }
 
     /**
-     * Get one row by primary key.
+     * Get one by primary key.
      *
      * @param $id
-     * @param $override
+     * @param array $override
      *
-     * @return array
+     * @return mixed
      */
     public function getByPrimaryKey($id, $override = [])
     {
-        $payload = $this->applyFilters([$this->primary_key => $id]);
+        return $this->withDefaultTransformations(
+            $this->smart_array->filter($this->applyFilters([$this->primary_key => $id]))
+        )
+            ->map($this->applyOverride($override))
+            ->first();
 
-        return $this->process($payload[0], $override);
     }
 
     /**
-     * Get the value of a given row/column in the Table.
+     * Get row's column value.
      *
      * @param $column
      * @param int $row
@@ -151,27 +234,24 @@ class TableFacade
      */
     public function getValue($column, $row = 0)
     {
-        return $this->table->getValue($row, $column);
+        return $this->smart_array
+                ->filter($this->filterByIndex($row))
+                ->first()[$column] ?? null;
     }
 
     /**
      * Get all the values for given columns.
      *
      * @param array|string $columns
-     * @param array        $filters
+     * @param array $filters
      *
      * @return array
      */
     public function getValues($columns, $filters = [])
     {
-        $output = [];
-        $columns = is_array($columns) ? $columns : [$columns];
-        $payload = $this->getWhere($filters);
-        foreach ($columns as $column) {
-            $output[$column] = array_column($payload, $column);
-        }
-
-        return $output;
+        return $this->smart_array
+            ->filter($this->applyFilters($filters))
+            ->columnValues($columns);
     }
 
     /**
@@ -181,48 +261,22 @@ class TableFacade
      */
     public function getRowCount()
     {
-        return $this->table->getRowCount();
-    }
-
-    /**
-     * @param array $filters
-     *
-     * @return array
-     */
-    public function applyFilters($filters)
-    {
-        $output = [];
-        $fixtures = $this->getAllRaw();
-        foreach ($fixtures as $fixture) {
-            $found = true;
-            foreach ($filters as $key => $value) {
-                if ($fixture[$key] != $value) {
-                    $found = false;
-                }
-            }
-            if ($found) {
-                $output[] = $fixture;
-            }
-        }
-
-        return $output;
+        return $this->smart_array->count();
     }
 
     /**
      * Get many rows using filters in the form of key value. Perform AND only.
      *
      * @param array $filters
+     * @param array $override
      *
      * @return array
      */
     public function getWhere($filters, $override = [])
     {
-        $payload = $this->applyFilters($filters);
-        foreach ($payload as &$row) {
-            $row = $this->process($row, $override);
-        }
-
-        return $payload;
+        return $this->withDefaultTransformations($this->smart_array->filter($this->applyFilters($filters)))
+            ->map($this->applyOverride($override))
+            ->get();
     }
 
     /**
@@ -230,60 +284,20 @@ class TableFacade
      * the actual format of the payload. e.g. The db store a name while the web form
      * send first_name and last_name separately.
      *
-     * @param $payload
      *
      * @return mixed
      */
-    protected function postProcess($payload)
+    protected function applyPostProcess()
     {
-        return $payload;
+        return function ($row) {
+            return $row;
+        };
     }
 
     /**
      * @param array $payload
-     * @param array $override
-     *
-     * @return array
-     */
-    private function process($payload, $override)
-    {
-        $payload = $this->applyDefaultOverride($payload);
-        $payload = $this->postProcess($payload);
-        $payload = $this->hide($payload);
-        foreach ($override as $key => $value) {
-            $payload = $this->dotSetter($payload, $key, $value);
-        }
-
-        return $payload;
-    }
-
-    private function applyDefaultOverride($payload)
-    {
-        foreach ($this->default_override as $key => $value) {
-            $payload = $this->dotSetter($payload, $key, $value);
-        }
-
-        return $payload;
-    }
-
-    /**
-     * @param array $rows
-     *
-     * @return array
-     */
-    private function hide($rows)
-    {
-        foreach ($this->hidden as $hidden) {
-            unset($rows[$hidden]);
-        }
-
-        return $rows;
-    }
-
-    /**
-     * @param array  $payload
      * @param string $keys
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return array
      */
