@@ -2,7 +2,6 @@
 
 namespace Bendamqui\DbUnit;
 
-use PHPUnit\DbUnit\DataSet\ITable;
 use Closure;
 
 /**
@@ -10,11 +9,6 @@ use Closure;
  */
 class TableFacade
 {
-    /**
-     * @var ITable
-     */
-    private $table;
-
     /**
      * @var SmartArray
      */
@@ -38,26 +32,11 @@ class TableFacade
     /**
      * TableFacade constructor.
      *
-     * @param ITable $table
+     * @param array $table
      */
-    public function __construct(ITable $table)
+    public function __construct(array $table)
     {
-        $this->table = $table;
-        $this->smart_array = new SmartArray($this->iTableToArray());
-
-    }
-
-    /**
-     * @return array
-     */
-    private function iTableToArray()
-    {
-        $output = [];
-        $row_count = $this->table->getRowCount();
-        for ($i = 0; $i < $row_count; ++$i) {
-            $output[] = $this->table->getRow($i);
-        }
-        return $output;
+        $this->smart_array = new SmartArray($table);
     }
 
     /**
