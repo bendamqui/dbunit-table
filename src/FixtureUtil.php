@@ -5,9 +5,9 @@ namespace Bendamqui\DbUnit;
 use Closure;
 
 /**
- * Class TableFacade.
+ * Class FixtureUtil.
  */
-class TableFacade
+class FixtureUtil
 {
     /**
      * @var SmartArray
@@ -30,7 +30,7 @@ class TableFacade
     private $default_override = [];
 
     /**
-     * TableFacade constructor.
+     * FixtureUtil constructor.
      *
      * @param array $table
      */

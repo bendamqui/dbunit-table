@@ -23,48 +23,34 @@ composer require bendamqui/dbunit-table
 ```
 
 
-## Basic Setup 
+## Basic Setup example
 
-Assuming your class implement getDataSet and getConnection methods which are
-required by DbUnit.
 
 ```php
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait as DbUnit;
-use Bendamqui\DbUnit\TableFacade;
+use Bendamqui\DbUnit\FixtureUtil;
 
 class DbUnitUsersTest extends TestCase
 {
     /**
-     * @var TableFacade
+     * @var FixtureUtil
      */
     private $users_table;
     
     /**
+        * @var array 
+    */
+    private $data = [];
+    
+    /**
      * @var YourApp
      */
-    private $app;
-
-    /**
-     * Avoid conflicts between PHPUnit and DbUnit
-     * setUp methods.
-     */
-    use DbUnit {
-        setUp as protected DbUnitSetUp;
-    }
+    private $app;    
 
     public function setUp()
     {
-        parent::setUp();
-
-        // Make sure to set DbUnit up
-        $this->DbUnitSetUp();
-
-        // Get a table from the data set.
-        $table = $this->getDatabaseTester->getDataSet()->getTable('users');
-
-        // Pass the table to a new instance of TableFacade and you're good to go.
-        $this->users_table = new TableFacade($table);
+        parent::setUp();                
+        $this->users_table = new FixtureUtil($this->data);
     }   
 }
 ```
@@ -101,7 +87,7 @@ public function testCannotUpdateUserWithAnInvalidEmail()
 	// Get a valid payload to update a user and override the email field. 
 	$payload = $this->users_table->get(['email' => 'invalid_email']);
 	$response = $this->app->put('user', $payload);
-	$this->assertEquals(400, $response->getCode(), 'User update with invalid email should receive a bad request response');
+	$this->assertEquals(422, $response->getCode(), 'User update with invalid email should receive a bad request response');
 }	
 ```
 

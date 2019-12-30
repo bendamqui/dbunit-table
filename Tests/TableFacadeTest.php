@@ -1,14 +1,14 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Bendamqui\DbUnit\TableFacade;
+use Bendamqui\DbUnit\FixtureUtil;
 
 class TableFacadeTest extends TestCase
 {
     const PRIMARY_KEY = 'user_id';
 
     /**
-     * @var TableFacade
+     * @var FixtureUtil
      */
     private $table;
 
@@ -30,7 +30,7 @@ class TableFacadeTest extends TestCase
         parent::setUp();
         $fixture = $this->getFixture();
         $this->row_count = count($fixture);
-        $this->table = new TableFacade($fixture);
+        $this->table = new FixtureUtil($fixture);
         $this->table->setPrimaryKey(self::PRIMARY_KEY);
         $this->row_number = rand(0, $this->row_count - 1);
     }
