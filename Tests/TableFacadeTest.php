@@ -1,17 +1,14 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Bendamqui\DbUnit\TableFacade;
-use PHPUnit\DbUnit\DataSet\ArrayDataSet;
+use Bendamqui\DbUnit\FixtureUtil;
 
 class TableFacadeTest extends TestCase
 {
-    const ROW_COUNT = 5;
-
     const PRIMARY_KEY = 'user_id';
 
     /**
-     * @var TableFacade
+     * @var FixtureUtil
      */
     private $table;
 
@@ -23,26 +20,30 @@ class TableFacadeTest extends TestCase
      */
     private $row_number;
 
+    /**
+     * @var int
+     */
+    private $row_count;
+
     protected function setUp()
     {
         parent::setUp();
-        $this->table = new TableFacade($this->getDataSet()->getTable('users'));
+        $fixture = $this->getFixture();
+        $this->row_count = count($fixture);
+        $this->table = new FixtureUtil($fixture);
         $this->table->setPrimaryKey(self::PRIMARY_KEY);
-        $this->row_number = rand(0, self::ROW_COUNT - 1);
+        $this->row_number = rand(0, $this->row_count - 1);
     }
 
-    public function getDataSet()
+    private function getFixture()
     {
-        $data = file_get_contents(__DIR__.'/../Tests/fixture.json');
-        $data = json_decode($data, true);
-
-        return new ArrayDataSet($data);
+        return  require __DIR__.'/../Tests/fixture.php';
     }
 
     public function testGetAllRaw()
     {
         $result = $this->table->getAllRaw();
-        $this->assertCount(self::ROW_COUNT, $result);
+        $this->assertCount($this->row_count, $result);
     }
 
     public function testGetRaw()
@@ -60,7 +61,7 @@ class TableFacadeTest extends TestCase
     public function testGetRowCount()
     {
         $result = $this->table->getRowCount();
-        $this->assertEquals(self::ROW_COUNT, $result);
+        $this->assertEquals($this->row_count, $result);
     }
 
     public function testGetValue()
@@ -185,13 +186,13 @@ class TableFacadeTest extends TestCase
     public function testGetAll()
     {
         $result = $this->table->getAll();
-        $this->assertCount(self::ROW_COUNT, $result);
+        $this->assertCount($this->row_count, $result);
     }
 
     public function testGetAllWithOverride()
     {
         $result = $this->table->getAll(['email' => 'override_email']);
-        $this->assertCount(self::ROW_COUNT, $result);
+        $this->assertCount($this->row_count, $result);
         $this->assertEquals(array_unique(array_column($result, 'email'))[0], 'override_email');
     }
 
