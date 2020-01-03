@@ -37,6 +37,35 @@ class SmartArrayTest extends TestCase
         $this->assertInstanceOf(IteratorAggregate::class, $this->fixture);
     }
 
+    public function testOffsetExists()
+    {
+        $this->assertEquals(false, $this->simple->offsetExists('a'));
+        $this->assertEquals(true, $this->simple->offsetExists(0));
+    }
+
+    public function testOffsetGet()
+    {
+        $this->assertEquals(5, $this->simple->offsetGet(1));
+        $this->assertNull($this->simple->offsetGet('a'));
+    }
+
+    public function testOffsetSet()
+    {
+        $this->simple->offsetSet(0, 'offsetSet');
+        $this->assertEquals($this->simple->offsetGet(0), 'offsetSet');
+    }
+
+    public function testOffsetUnset()
+    {
+        $this->simple->offsetUnset(0);
+        $this->assertNull($this->simple->offsetGet(0));
+    }
+
+    public function testGetIterator()
+    {
+        $this->assertInstanceOf(ArrayIterator::class, $this->simple->getIterator());
+    }
+
     public function testMap()
     {
         $result = $this->simple->map($this->add(1));
