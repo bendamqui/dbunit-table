@@ -40,12 +40,6 @@ class TableFacadeTest extends TestCase
         return  require __DIR__.'/../Tests/fixture.php';
     }
 
-    public function testGetAllRaw()
-    {
-        $result = $this->table->getAllRaw();
-        $this->assertCount($this->row_count, $result);
-    }
-
     public function testGetRaw()
     {
         $result = $this->table->getRaw();
@@ -103,7 +97,6 @@ class TableFacadeTest extends TestCase
     public function testGetWhere($filters, $expected_row_count)
     {
         $result = $this->table->getWhere($filters);
-        $this->assertIsArray($result);
         $this->assertCount($expected_row_count, $result);
         foreach ($filters as $key => $value) {
             foreach ($result as $row) {
@@ -171,17 +164,8 @@ class TableFacadeTest extends TestCase
 
     public function testGetValues()
     {
-        $result = $this->table->getValues('user_id');
-        $this->assertEquals([1, 2, 3, 4, 5], $result['user_id']);
+        $this->assertEquals([1, 2, 3, 4, 5], $this->table->getValues('user_id')->toArray());
     }
-
-    public function testGetValuesWithMultipleColumns()
-    {
-        $result = $this->table->getValues(['user_id', 'role'], ['role' => 'admin']);
-        $this->assertEquals([1, 2, 3], $result['user_id']);
-        $this->assertEquals(array_fill(0, 3, 'admin'), $result['role']);
-    }
-
 
     public function testGetAll()
     {
@@ -193,7 +177,7 @@ class TableFacadeTest extends TestCase
     {
         $result = $this->table->getAll(['email' => 'override_email']);
         $this->assertCount($this->row_count, $result);
-        $this->assertEquals(array_unique(array_column($result, 'email'))[0], 'override_email');
+        $this->assertEquals(array_unique(array_column($result->toArray(), 'email'))[0], 'override_email');
     }
 
     /**
