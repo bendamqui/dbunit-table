@@ -70,23 +70,12 @@ class FixtureUtil
     /**
      * @param array $override
      *
-     * @return array
+     * @return SmartArray
      */
     public function getAll($override = [])
     {
         return $this->withDefaultTransformations($this->smart_array)
-            ->map($this->applyOverride($override))
-            ->get();
-    }
-
-    /**
-     * Get all rows in raw format (skip post processing).
-     *
-     * @return array
-     */
-    public function getAllRaw()
-    {
-        return $this->smart_array->get();
+            ->map($this->applyOverride($override));
     }
 
     /**
@@ -219,18 +208,17 @@ class FixtureUtil
     }
 
     /**
-     * Get all the values for given columns.
+     * Get all the values for given column.
      *
-     * @param array|string $columns
+     * @param string $columns
      * @param array $filters
      *
-     * @return array
+     * @return SmartArray
      */
-    public function getValues($columns, $filters = [])
+    public function getValues($column): SmartArray
     {
         return $this->smart_array
-            ->filter($this->applyFilters($filters))
-            ->columnValues($columns);
+            ->column($column);
     }
 
     /**
@@ -249,13 +237,12 @@ class FixtureUtil
      * @param array $filters
      * @param array $override
      *
-     * @return array
+     * @return SmartArray
      */
-    public function getWhere($filters, $override = [])
+    public function getWhere($filters, $override = []): SmartArray
     {
         return $this->withDefaultTransformations($this->smart_array->filter($this->applyFilters($filters)))
-            ->map($this->applyOverride($override))
-            ->get();
+            ->map($this->applyOverride($override));
     }
 
     /**

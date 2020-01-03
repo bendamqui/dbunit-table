@@ -3,8 +3,12 @@
 namespace Bendamqui\DbUnit;
 
 use Closure;
+use Countable;
+use ArrayAccess;
+use IteratorAggregate;
+use ArrayIterator;
 
-class SmartArray implements \Countable
+class SmartArray implements Countable, ArrayAccess, IteratorAggregate
 {
     /**
      * @var array
@@ -39,11 +43,13 @@ class SmartArray implements \Countable
     }
 
     /**
-     * @return array
+     * @param string $column
+     * @param string|null $index_key
+     * @return SmartArray
      */
-    public function get(): array
+    public function column(string $column, ?string $index_key = null): SmartArray
     {
-        return $this->array;
+        return new self(array_column($this->array, $column, $index_key));
     }
 
     /**
@@ -55,24 +61,58 @@ class SmartArray implements \Countable
     }
 
     /**
-     * @param string|array $columns
-     * @return array
+     * @return int
      */
-    public function columnValues($columns)
+    public function count(): int
     {
-        $output = [];
-        $columns = is_array($columns) ? $columns : [$columns];
-        foreach ($columns as $column) {
-            $output[$column] = array_column($this->get(), $column);
-        }
-        return $output;
+        return count($this->array);
     }
 
     /**
-     * @return int
+     * @inheritDoc
      */
-    public function count()
+    public function offsetExists($offset): bool
     {
-        return count($this->array);
+        return isset($this->array[$offset]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetGet($offset)
+    {
+        return $this->array[$offset] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetSet($offset, $value)
+    {
+        is_null($offset) ? $this->array[] = $offset : $this->array[$offset] = $value;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->array[$offset]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->array);
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->array;
     }
 }

@@ -3,3 +3,5 @@
 /report
 /vendor
 .php_cs.cache
+/coverage
+sandbox.php
