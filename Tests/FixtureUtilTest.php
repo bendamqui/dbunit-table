@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use Bendamqui\DbUnit\FixtureUtil;
 
-class TableFacadeTest extends TestCase
+class FixtureUtilTest extends TestCase
 {
     const PRIMARY_KEY = 'user_id';
 
@@ -80,6 +80,21 @@ class TableFacadeTest extends TestCase
     {
         $result = $this->table->get(['first_name' => 'Bob'], $this->row_number);
         $this->assertEquals('Bob', $result['first_name']);
+    }
+
+    public function testOverrideClosure()
+    {
+        $this->table->setDefaultOverride([
+            'override' => function($row) {
+                return $row['email'];
+            }
+        ]);
+
+        foreach ($this->table->getValues('override') as $value) {
+            $this->assertNotNull($value);
+        }
+
+        $this->assertEquals($this->table->getValues('override'), $this->table->getValues('email'));
     }
 
     public function testHide()
