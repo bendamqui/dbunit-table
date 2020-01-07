@@ -242,7 +242,8 @@ class FixtureUtil
      */
     public function getWhere($filters, $override = []): SmartArray
     {
-        return $this->withDefaultTransformations($this->smart_array->filter($this->applyFilters($filters)))
+        return $this->withDefaultTransformations($this->smart_array)
+            ->filter($this->applyFilters($filters))
             ->map($this->applyOverride($override));
     }
 
