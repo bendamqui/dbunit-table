@@ -110,6 +110,7 @@ class FixtureUtil
     {
         return function ($row) use ($override) {
             foreach ($override as $key => $value) {
+                $value = $value instanceof Closure ? $value($row, $key) : $value;
                 $row = $this->dotSetter($row, $key, $value);
             }
             return $row;
@@ -202,7 +203,7 @@ class FixtureUtil
      */
     public function getValue($column, $row = 0)
     {
-        return $this->smart_array
+        return $this->withDefaultTransformations($this->smart_array)
                 ->filter($this->filterByIndex($row))
                 ->first()[$column] ?? null;
     }
@@ -217,7 +218,7 @@ class FixtureUtil
      */
     public function getValues($column): SmartArray
     {
-        return $this->smart_array
+        return $this->withDefaultTransformations($this->smart_array)
             ->column($column);
     }
 
